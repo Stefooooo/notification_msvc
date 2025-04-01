@@ -1,6 +1,7 @@
 package app.web;
 
 
+import app.web.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import app.model.Notification;
@@ -10,10 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import app.service.NotificationService;
-import app.web.dto.NotificationPreferenceResponse;
-import app.web.dto.NotificationRequest;
-import app.web.dto.NotificationResponse;
-import app.web.dto.UpsertNotificationPreference;
 import app.web.mapper.DtoMapper;
 
 import java.util.ArrayList;
@@ -55,6 +52,14 @@ public class NotificationController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(responseDto);
+    }
+
+    @PostMapping("/preferences/schedule")
+    public ResponseEntity<Void> addUserPreferenceToAddIfNotExistent(@RequestBody UserWithNoPreference userWithNoPreference) {
+
+        notificationService.getOrAddPreference(userWithNoPreference);
+
+        return ResponseEntity.ok().body(null);
     }
 
     @PostMapping

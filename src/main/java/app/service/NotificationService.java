@@ -151,4 +151,21 @@ public class NotificationService {
             notificationRepository.save(notification);
         }
     }
+
+    public NotificationPreference getOrAddPreference(UserWithNoPreference userWithNoPreference) {
+
+        Optional<NotificationPreference> byUserId = preferenceRepository.findByUserId(userWithNoPreference.getId());
+        if (byUserId.isPresent()){
+            return byUserId.get();
+        }
+
+        UpsertNotificationPreference upsertNotificationPreference = UpsertNotificationPreference.builder()
+                .notificationEnabled(false)
+                .userId(userWithNoPreference.getId())
+                .type(NotificationTypeRequest.EMAIL)
+                .contactInfo(userWithNoPreference.getEmail())
+                .build();
+
+       return upsertPreference(upsertNotificationPreference);
+    }
 }
