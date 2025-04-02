@@ -110,6 +110,7 @@ public class NotificationService {
         // If does not exist - throws exception
         NotificationPreference notificationPreference = getPreferenceByUserId(userId);
         notificationPreference.setEnabled(enabled);
+        notificationPreference.setUpdatedOn(LocalDateTime.now());
         return preferenceRepository.save(notificationPreference);
     }
 
