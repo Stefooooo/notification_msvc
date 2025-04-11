@@ -44,7 +44,8 @@ public class NotificationService {
             preference.setEnabled(dto.isNotificationEnabled());
             preference.setType(DtoMapper.fromNotificationTypeRequest(dto.getType()));
             preference.setUpdatedOn(LocalDateTime.now());
-            return preferenceRepository.save(preference);
+            preferenceRepository.save(preference);
+            return preference;
         }
 
         NotificationPreference notificationPreference = NotificationPreference.builder()
@@ -56,7 +57,8 @@ public class NotificationService {
                 .updatedOn(LocalDateTime.now())
                 .build();
 
-        return preferenceRepository.save(notificationPreference);
+        preferenceRepository.save(notificationPreference);
+        return notificationPreference;
     }
 
     public NotificationPreference getPreferenceByUserId(UUID userId) {
@@ -96,7 +98,8 @@ public class NotificationService {
             log.warn("There was an issue sending an email to %s due to %s.".formatted(userPreference.getContactInfo(), e.getMessage()));
         }
 
-        return notificationRepository.save(notification);
+        notificationRepository.save(notification);
+        return notification;
     }
 
     public List<Notification> getNotificationHistory(UUID userId) {
@@ -111,10 +114,11 @@ public class NotificationService {
         NotificationPreference notificationPreference = getPreferenceByUserId(userId);
         notificationPreference.setEnabled(enabled);
         notificationPreference.setUpdatedOn(LocalDateTime.now());
-        return preferenceRepository.save(notificationPreference);
+        preferenceRepository.save(notificationPreference);
+        return notificationPreference;
     }
 
-    public void clearNotifications(UUID userId) {
+    public List<Notification> clearNotifications(UUID userId) {
 
         List<Notification> notifications = getNotificationHistory(userId);
 
@@ -122,6 +126,8 @@ public class NotificationService {
             notification.setDeleted(true);
             notificationRepository.save(notification);
         });
+
+        return notifications;
     }
 
     public void retryFailedNotifications(UUID userId) {
